@@ -40,14 +40,19 @@ He preparado todo lo necesario para desplegar tu aplicación CRM en EasyPanel. A
 2. **Actualiza el dominio** en [`next.config.ts`](next.config.ts):
    - Reemplaza `'your-app.easypanel.io'` con tu dominio real
 
-3. **Decide sobre la base de datos**:
-   - Opción 1: Usar servicios gestionados de EasyPanel (recomendado)
-   - Opción 2: Usar contenedores Docker (incluidos en docker-compose.easypanel.yml)
+3. **Base de datos automática con Docker**:
+   - ✅ ¡La base de datos se creará automáticamente!
+   - PostgreSQL y Redis se crearán solos con el despliegue
+   - Las migraciones y datos iniciales se aplicarán automáticamente
+   - Sin configuración manual necesaria
 
 4. **Puertos dinámicos**:
-   - ¡No te preocupes por los puertos! EasyPanel los manejará automáticamente
-   - La configuración ya está preparada para puertos dinámicos
-   - EasyPanel asignará puertos únicos y configurará el proxy automáticamente
+   - ✅ ¡Puertos asignados automáticamente!
+   - Sin conflictos con otras aplicaciones
+   - EasyPanel gestiona todo el enrutamiento
+
+5. **Lee la guía específica**:
+   - Consulta [`GUIA_DESPLIEGUE_AUTOMATICO.md`](GUIA_DESPLIEGUE_AUTOMATICO.md) para instrucciones detalladas
 
 ### 2. En EasyPanel
 

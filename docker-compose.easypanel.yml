@@ -94,8 +94,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    profiles:
-      - docker-db
     # EasyPanel will handle port mapping automatically
     expose:
       - "6379"
