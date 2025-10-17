@@ -124,4 +124,171 @@ export interface UpdateRestaurantData {
   email?: string;
   description?: string;
   timezone?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  website?: string;
+  logo?: string;
+  currency?: string;
+  isActive?: boolean;
+}
+
+// Restaurant Settings types
+export interface RestaurantSettings {
+  id: string;
+  restaurantId: string;
+  language: string;
+  dateFormat: string;
+  timeFormat: string;
+  defaultReservationDuration: number;
+  maxAdvanceBookingDays: number;
+  minAdvanceBookingHours: number;
+  maxPartySize: number;
+  enableOnlineBookings: boolean;
+  enableWaitlist: boolean;
+  confirmationEmailEnabled: boolean;
+  reminderEmailEnabled: boolean;
+  reminderEmailHoursBefore: number;
+  cancellationEmailEnabled: boolean;
+  autoCancelNoShowMinutes: number;
+  emailNotifications?: Record<string, any>;
+  smsNotifications?: Record<string, any>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface UpdateRestaurantSettingsData {
+  language?: string;
+  dateFormat?: string;
+  timeFormat?: string;
+  defaultReservationDuration?: number;
+  maxAdvanceBookingDays?: number;
+  minAdvanceBookingHours?: number;
+  maxPartySize?: number;
+  enableOnlineBookings?: boolean;
+  enableWaitlist?: boolean;
+  confirmationEmailEnabled?: boolean;
+  reminderEmailEnabled?: boolean;
+  reminderEmailHoursBefore?: number;
+  cancellationEmailEnabled?: boolean;
+  autoCancelNoShowMinutes?: number;
+  emailNotifications?: Record<string, any>;
+  smsNotifications?: Record<string, any>;
+}
+
+// Operating Hours types
+export interface OperatingHour {
+  id: string;
+  restaurantId: string;
+  dayOfWeek: number;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
+  isSpecialDay: boolean;
+  specialDate?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateOperatingHourData {
+  dayOfWeek: number;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
+  isSpecialDay?: boolean;
+  specialDate?: Date;
+}
+
+export interface UpdateOperatingHourData {
+  openTime?: string;
+  closeTime?: string;
+  isClosed?: boolean;
+  isSpecialDay?: boolean;
+  specialDate?: Date;
+}
+
+// Area types
+export interface Area {
+  id: string;
+  restaurantId: string;
+  name: string;
+  description?: string;
+  maxCapacity: number;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateAreaData {
+  name: string;
+  description?: string;
+  maxCapacity: number;
+  isActive?: boolean;
+}
+
+export interface UpdateAreaData {
+  name?: string;
+  description?: string;
+  maxCapacity?: number;
+  isActive?: boolean;
+}
+
+// Business Rules types
+export interface BusinessRule {
+  id: string;
+  restaurantId: string;
+  name: string;
+  description?: string;
+  ruleType: string;
+  conditions: Record<string, any>;
+  actions: Record<string, any>;
+  isActive: boolean;
+  priority: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateBusinessRuleData {
+  name: string;
+  description?: string;
+  ruleType: string;
+  conditions: Record<string, any>;
+  actions: Record<string, any>;
+  isActive?: boolean;
+  priority?: number;
+}
+
+export interface UpdateBusinessRuleData {
+  name?: string;
+  description?: string;
+  ruleType?: string;
+  conditions?: Record<string, any>;
+  actions?: Record<string, any>;
+  isActive?: boolean;
+  priority?: number;
+}
+
+// Form types
+export interface CreateRestaurantData {
+  name: string;
+  address: string;
+  city: string;
+  phone: string;
+  email: string;
+  description?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  website?: string;
+  timezone?: string;
+  currency?: string;
+}
+
+// Restaurant with relations
+export interface RestaurantWithRelations extends Restaurant {
+  settings?: RestaurantSettings;
+  operatingHours?: OperatingHour[];
+  areas?: Area[];
+  businessRules?: BusinessRule[];
 }

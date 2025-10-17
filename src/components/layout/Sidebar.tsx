@@ -6,11 +6,12 @@ import { cn } from '@/lib/utils';
 interface SidebarItemProps {
   href: string;
   icon: ReactNode;
-  label: string;
+  label?: string;
   active?: boolean;
+  collapsed?: boolean;
 }
 
-function SidebarItem({ href, icon, label, active }: SidebarItemProps) {
+function SidebarItem({ href, icon, label, active, collapsed = false }: SidebarItemProps) {
   return (
     <Link
       href={href}
@@ -18,27 +19,35 @@ function SidebarItem({ href, icon, label, active }: SidebarItemProps) {
         'flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200',
         active
           ? 'bg-primary-100 text-primary-700'
-          : 'text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900'
+          : 'text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900',
+        collapsed ? 'justify-center' : ''
       )}
+      title={collapsed ? label : undefined}
     >
-      <div className="mr-3 h-5 w-5">{icon}</div>
-      {label}
+      <div className={cn('h-5 w-5', !collapsed && 'mr-3')}>{icon}</div>
+      {label && !collapsed && label}
     </Link>
   );
 }
 
 interface SidebarProps {
   restaurantName?: string;
+  collapsed?: boolean;
+  onToggle?: () => void;
 }
 
-export default function Sidebar({ restaurantName = 'Mi Restaurante' }: SidebarProps) {
+export default function Sidebar({
+  restaurantName = 'Mi Restaurante',
+  collapsed = false,
+  onToggle
+}: SidebarProps) {
   const pathname = usePathname();
   
   return (
-    <div className="flex flex-col h-full bg-white border-r border-secondary-200">
+    <div className="flex flex-col h-full bg-white border-r border-secondary-200 transition-all duration-300">
       <div className="flex items-center h-16 px-4 border-b border-secondary-200">
         <div className="flex items-center">
-          <div className="h-8 w-8 rounded-lg bg-restaurant-gold flex items-center justify-center mr-3">
+          <div className="h-8 w-8 rounded-lg bg-restaurant-gold flex items-center justify-center">
             <svg
               className="h-5 w-5 text-white"
               fill="none"
@@ -53,10 +62,12 @@ export default function Sidebar({ restaurantName = 'Mi Restaurante' }: SidebarPr
               />
             </svg>
           </div>
-          <div>
-            <h2 className="text-lg font-semibold text-secondary-900">{restaurantName}</h2>
-            <p className="text-xs text-secondary-500">Panel de Control</p>
-          </div>
+          {!collapsed && (
+            <div className="ml-3">
+              <h2 className="text-lg font-semibold text-secondary-900">{restaurantName}</h2>
+              <p className="text-xs text-secondary-500">Panel de Control</p>
+            </div>
+          )}
         </div>
       </div>
       
@@ -77,8 +88,9 @@ export default function Sidebar({ restaurantName = 'Mi Restaurante' }: SidebarPr
               />
             </svg>
           }
-          label="Dashboard"
+          label={collapsed ? undefined : "Dashboard"}
           active={pathname === '/dashboard'}
+          collapsed={collapsed}
         />
         
         <SidebarItem
@@ -97,8 +109,9 @@ export default function Sidebar({ restaurantName = 'Mi Restaurante' }: SidebarPr
               />
             </svg>
           }
-          label="Reservas"
+          label={collapsed ? undefined : "Reservas"}
           active={pathname.startsWith('/reservations')}
+          collapsed={collapsed}
         />
         
         <SidebarItem
@@ -117,8 +130,9 @@ export default function Sidebar({ restaurantName = 'Mi Restaurante' }: SidebarPr
               />
             </svg>
           }
-          label="Mesas"
+          label={collapsed ? undefined : "Mesas"}
           active={pathname.startsWith('/tables')}
+          collapsed={collapsed}
         />
         
         <SidebarItem
@@ -137,8 +151,9 @@ export default function Sidebar({ restaurantName = 'Mi Restaurante' }: SidebarPr
               />
             </svg>
           }
-          label="Restaurante"
+          label={collapsed ? undefined : "Restaurante"}
           active={pathname.startsWith('/restaurant')}
+          collapsed={collapsed}
         />
         
         <SidebarItem
@@ -163,14 +178,15 @@ export default function Sidebar({ restaurantName = 'Mi Restaurante' }: SidebarPr
               />
             </svg>
           }
-          label="Configuración"
+          label={collapsed ? undefined : "Configuración"}
           active={pathname.startsWith('/settings')}
+          collapsed={collapsed}
         />
       </nav>
       
       <div className="p-4 border-t border-secondary-200">
         <div className="flex items-center">
-          <div className="h-8 w-8 rounded-full bg-secondary-200 flex items-center justify-center mr-3">
+          <div className="h-8 w-8 rounded-full bg-secondary-200 flex items-center justify-center">
             <svg
               className="h-4 w-4 text-secondary-600"
               fill="none"
@@ -185,12 +201,14 @@ export default function Sidebar({ restaurantName = 'Mi Restaurante' }: SidebarPr
               />
             </svg>
           </div>
-          <div>
-            <p className="text-sm font-medium text-secondary-900">Usuario</p>
-            <Link href="/auth/logout" className="text-xs text-secondary-500 hover:text-secondary-700">
-              Cerrar sesión
-            </Link>
-          </div>
+          {!collapsed && (
+            <div className="ml-3">
+              <p className="text-sm font-medium text-secondary-900">Usuario</p>
+              <Link href="/auth/logout" className="text-xs text-secondary-500 hover:text-secondary-700">
+                Cerrar sesión
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
