@@ -1,12 +1,13 @@
 # Multi-stage build for production optimization
-# Stage 1: Install dependencies
+# Stage 1: Install ALL dependencies for build
 FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat curl
 WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json ./
-RUN npm ci --only=production && npm cache clean --force
+# Install ALL dependencies (including dev dependencies) for build
+RUN npm ci && npm cache clean --force
 
 # Stage 2: Build the application
 FROM node:20-alpine AS builder
@@ -21,7 +22,7 @@ RUN npx prisma generate
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
 
-# Stage 3: Production image
+# Stage 3: Production image with ONLY production dependencies
 FROM node:20-alpine AS runner
 WORKDIR /app
 
@@ -34,6 +35,10 @@ RUN apk add --no-cache curl
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+
+# Install ONLY production dependencies
+COPY package.json package-lock.json ./
+RUN npm ci --only=production && npm cache clean --force
 
 # Copy built application
 COPY --from=builder /app/public ./public
