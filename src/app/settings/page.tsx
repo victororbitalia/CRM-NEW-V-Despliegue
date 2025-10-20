@@ -129,16 +129,34 @@ export default function SettingsPage() {
   };
 
   const handleToggleNotificationSetting = (category: string, key: string, value: boolean) => {
-    setSettings(prev => ({
-      ...prev,
-      notifications: {
-        ...prev.notifications,
-        [category]: {
-          ...prev.notifications[category as keyof typeof prev.notifications],
+    setSettings(prev => {
+      const notifications = { ...prev.notifications };
+      
+      // Use type assertion to handle the complex type structure
+      if (category === 'emailNotifications') {
+        notifications.emailNotifications = {
+          ...notifications.emailNotifications,
           [key]: value,
-        },
-      },
-    }));
+        };
+      } else if (category === 'smsNotifications') {
+        notifications.smsNotifications = {
+          ...notifications.smsNotifications,
+          [key]: value,
+        };
+      } else {
+        // For other categories, use type assertion
+        const currentCategory = notifications[category as keyof typeof notifications] as any;
+        notifications[category as keyof typeof notifications] = {
+          ...currentCategory,
+          [key]: value,
+        };
+      }
+      
+      return {
+        ...prev,
+        notifications,
+      };
+    });
   };
 
   const sections = [
