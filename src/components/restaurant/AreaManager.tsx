@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Area, CreateAreaData, UpdateAreaData } from '@/types';
+import { Area as TypeArea, CreateAreaData as TypeCreateAreaData, UpdateAreaData as TypeUpdateAreaData } from '@/types';
+import { Area, CreateAreaData, UpdateAreaData } from '@/hooks/useAreas';
 import { useAreas } from '@/hooks/useAreas';
 import { useNotifications } from '@/hooks/useNotifications';
 import Form, { FormField, FormLabel, FormActions } from '@/components/ui/Form';
@@ -31,7 +32,7 @@ interface AreaFormData {
 }
 
 export default function AreaManager({ restaurantId, onSave }: AreaManagerProps) {
-  const { areas, loading, error, fetchAreas, createArea, updateAreas, deleteArea } = useAreas(restaurantId);
+  const { areas, isLoading, error, fetchAreas, createArea, updateArea, deleteArea } = useAreas(restaurantId);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showModal, setShowModal] = useState(false);
@@ -46,10 +47,8 @@ export default function AreaManager({ restaurantId, onSave }: AreaManagerProps) 
   const { showSuccess, showError } = useNotifications();
 
   useEffect(() => {
-    if (restaurantId) {
-      fetchAreas(restaurantId);
-    }
-  }, [restaurantId, fetchAreas]);
+    // fetchAreas se llama automáticamente en el hook cuando restaurantId cambia
+  }, [restaurantId]);
 
   const resetForm = () => {
     setFormData({
@@ -124,14 +123,14 @@ export default function AreaManager({ restaurantId, onSave }: AreaManagerProps) 
     try {
       if (editingArea) {
         // Update existing area
-        const updateData: UpdateAreaData = {
+        const updateData: Omit<UpdateAreaData, 'id'> = {
           name: formData.name.trim(),
           description: formData.description.trim() || undefined,
           maxCapacity: Number(formData.maxCapacity),
           isActive: formData.isActive,
         };
 
-        const result = await updateAreas(restaurantId, [{ ...updateData, id: editingArea.id } as AreaUpdateData]);
+        const result = await updateArea({ ...updateData, id: editingArea.id });
         
         if (result) {
           showSuccess('Área actualizada correctamente');
@@ -141,13 +140,14 @@ export default function AreaManager({ restaurantId, onSave }: AreaManagerProps) 
       } else {
         // Create new area
         const createData: CreateAreaData = {
+          restaurantId,
           name: formData.name.trim(),
           description: formData.description.trim() || undefined,
           maxCapacity: Number(formData.maxCapacity),
           isActive: formData.isActive,
         };
 
-        const result = await createArea(restaurantId, createData);
+        const result = await createArea(createData);
         
         if (result) {
           showSuccess('Área creada correctamente');
@@ -169,7 +169,7 @@ export default function AreaManager({ restaurantId, onSave }: AreaManagerProps) 
     }
 
     try {
-      const success = await deleteArea(restaurantId, area.id);
+      const success = await deleteArea(area.id);
       
       if (success) {
         showSuccess('Área eliminada correctamente');
@@ -183,11 +183,11 @@ export default function AreaManager({ restaurantId, onSave }: AreaManagerProps) 
 
   const handleToggleActive = async (area: Area) => {
     try {
-      const updateData: UpdateAreaData = {
+      const updateData: Omit<UpdateAreaData, 'id'> = {
         isActive: !area.isActive,
       };
 
-      const result = await updateAreas(restaurantId, [{ ...updateData, id: area.id } as AreaUpdateData]);
+      const result = await updateArea({ ...updateData, id: area.id });
       
       if (result) {
         showSuccess(`Área ${area.isActive ? 'desactivada' : 'activada'} correctamente`);
@@ -199,7 +199,7 @@ export default function AreaManager({ restaurantId, onSave }: AreaManagerProps) 
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center p-8">
         <Loading size="lg" />
